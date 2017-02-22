@@ -2,24 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-using System.ComponentModel;
 using System.Diagnostics;
-
-using MailboxLogParser.Common.Reporting;
-using MailboxLogParser.Common.Parsing;
-using MailboxLogParser.Common.Reporting.BasicReport;
-using MailboxLogParser.Common.Reporting.Reports;
 using System.Data;
 using Microsoft.Win32;
 
@@ -30,18 +15,20 @@ namespace MailboxLogParser
     /// </summary>
     public partial class MainWindow : Window
     {
-
-        
+        #region fields
         private List<int> HiddenGridRowIndexes = new List<int>();
         private static StringBuilder ResponseDataBuilder = new StringBuilder();
         private ViewModel viewModel;
+        #endregion
 
+        #region Constructor
         public MainWindow()
         {
             InitializeComponent();
             viewModel = new ViewModel();
             dgMain.ItemsSource = viewModel.View;
         }
+        #endregion
 
         #region Private Methods
 
@@ -122,7 +109,7 @@ namespace MailboxLogParser
         }
 
         /// <summary>
-        /// ToDo: This logic should eventually just pull the entries from the data grid into the separate
+        /// ToDo: This logic should eventually just pull the entries from the data grid / model into the separate
         /// view windows
         /// </summary>
         /// <param name="rowId"></param>
@@ -192,6 +179,8 @@ namespace MailboxLogParser
 
         #endregion
 
+        #region UI Control button events etc
+
         private void btnImport_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -215,7 +204,6 @@ namespace MailboxLogParser
                     finally
                     {
                         // ToDo: Reset wait cursor?
-                        
                     }
                 }
 
@@ -233,5 +221,12 @@ namespace MailboxLogParser
 
             LoadReportRowData(item["Id"].ToString());
         }
+
+        private void btnClear_Click(object sender, RoutedEventArgs e)
+        {
+            ClearLogs();
+        }
+
+        #endregion
     }
 }

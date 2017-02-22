@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MailboxLogParser"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="630">
+        Title="MainWindow" Height="527.525" Width="939">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="DataGridColumn"></ColumnDefinition>
@@ -17,16 +17,18 @@
             <RowDefinition x:Name="StatusRow" Height="34"></RowDefinition>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" Grid.ColumnSpan="2">
-            <Button x:Name="btnImport" Content="Import" Width="90" Margin="2,2,2,2" HorizontalAlignment="Left" Click="btnImport_Click"></Button>
-            <Button x:Name="btnClear" Content="Clear Grid" Width="90" Margin="2,2,2,2" HorizontalAlignment="Left"></Button>
+            <Button x:Name="btnImport" Content="Import" Width="90" Margin="2,2,2,2" HorizontalAlignment="Left" 
+                    Click="btnImport_Click"></Button>
+            <Button x:Name="btnClear" Content="Clear Grid" Width="90" Margin="2,2,2,2" HorizontalAlignment="Left"
+                    Click="btnClear_Click"></Button>
             <Button x:Name="btnExportMerged" Width="90" Margin="2,2,2,2" HorizontalAlignment="Left">
                 <TextBlock TextWrapping="Wrap">Export Merged Mailbox Logs...</TextBlock>
             </Button>
             <Button x:Name="btnExportToCsv" Width="90" Margin="2,2,2,2" HorizontalAlignment="Left">
                 <TextBlock TextWrapping="Wrap">Export Grid to CSV...</TextBlock>
             </Button>
-            <Separator Width="4" Height="48" Margin="2,2,2,2"></Separator>
-            <StackPanel Margin="2,2,2,2">
+            
+            <StackPanel Margin="4,2,2,2">
                 <Label Content="Search:"></Label>
                 <TextBox x:Name="txtSearch" Width="150"></TextBox>
             </StackPanel>
@@ -35,20 +37,23 @@
                 <Button x:Name="btnClearSearch" Margin="2,2,2,2">Clear</Button>
             </StackPanel>
         </StackPanel>
-        <DataGrid x:Name="dgMain" Grid.Column="0" Grid.Row="1" Margin="2,2,2,2"
+        <DataGrid x:Name="dgMain" Grid.Column="0" Grid.Row="1" Margin="2,2,6,2"
                   SelectionChanged="dgMain_SelectionChanged"></DataGrid>
+        <GridSplitter Grid.Row="1" Width="2" Margin="2,2,2,2" ResizeDirection="Columns"></GridSplitter>
         <Grid Grid.Column="1" Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="HeaderRow"></RowDefinition>
+                <RowDefinition x:Name="SplitterRow1" Height="4"></RowDefinition>
                 <RowDefinition x:Name="RequestRow"></RowDefinition>
+                <RowDefinition x:Name="SplitterRow2" Height="4"></RowDefinition>
                 <RowDefinition x:Name="ResponseRow"></RowDefinition>
             </Grid.RowDefinitions>
-            <TextBox x:Name="LogDetailHeaders" Grid.Row="0" Margin="2,2,2,2">Headers</TextBox>
-            <GridSplitter x:Name="splitHoriz1" ></GridSplitter>
-            <TextBox x:Name="LogDetailRequest" Grid.Row="1" Margin="2,2,2,2">Request</TextBox>
-            <GridSplitter x:Name="splitHoriz2"></GridSplitter>
-            <TextBox x:Name="LogDetailResponse" Grid.Row="2" Margin="2,2,2,2">Response</TextBox>
-            
+            <TextBox x:Name="LogDetailHeaders" Grid.Row="0" Margin="2,2,2,4">Headers</TextBox>
+            <GridSplitter x:Name="splitHoriz1" Height="4" ResizeDirection="Rows" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  />
+            <TextBox x:Name="LogDetailRequest" Grid.Row="2" Margin="2,4,2,4">Request</TextBox>
+            <GridSplitter x:Name="splitHoriz2" Height="4" ResizeDirection="Rows" Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            <TextBox x:Name="LogDetailResponse" Grid.Row="4" Margin="2,4,2,2">Response</TextBox>
+
         </Grid>
         <StatusBar x:Name="StatusBar" Grid.Row="2" Grid.ColumnSpan="2" Margin="2,2,2,2">
             <StatusBarItem x:Name="StatusLabel" Margin="2,2,2,2" Width="160" >Import a mailbox log...</StatusBarItem>
