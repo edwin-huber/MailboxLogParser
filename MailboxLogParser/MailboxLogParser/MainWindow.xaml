@@ -5,8 +5,34 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MailboxLogParser"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="350" Width="630">
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="DataGridColumn"></ColumnDefinition>
+            <ColumnDefinition x:Name="ParsedContentColumn"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="MenauAndHeaderRow" Height="52"></RowDefinition>
+            <RowDefinition x:Name="DataAnalysisRow"></RowDefinition>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Grid.ColumnSpan="2">
+            <Button x:Name="btnImport" Content="Import" Width="90" Margin="2,2,2,2" HorizontalAlignment="Left"></Button>
+            <Button x:Name="btnClear" Content="Clear Grid" Width="90" Margin="2,2,2,2" HorizontalAlignment="Left"></Button>
+            <Button x:Name="btnExportMerged" Width="90" Margin="2,2,2,2" HorizontalAlignment="Left">
+                <TextBlock TextWrapping="Wrap">Export Merged Mailbox Logs...</TextBlock>
+            </Button>
+            <Button x:Name="btnExportToCsv" Width="90" Margin="2,2,2,2" HorizontalAlignment="Left">
+                <TextBlock TextWrapping="Wrap">Export Grid to CSV...</TextBlock>
+            </Button>
+            <Separator Width="4" Height="48" Margin="2,2,2,2"></Separator>
+            <StackPanel Margin="2,2,2,2">
+                <Label Content="Search:"></Label>
+                <TextBox x:Name="txtSearch" Width="150"></TextBox>
+            </StackPanel>
+            <StackPanel Margin="2,2,2,2">
+                <Button x:Name="btnSearch" Width="70" Margin="2,2,2,2">Search</Button>
+                <Button x:Name="btnClearSearch" Margin="2,2,2,2">Clear</Button>
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </Window>
