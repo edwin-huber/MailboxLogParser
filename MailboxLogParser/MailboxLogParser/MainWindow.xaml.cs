@@ -217,9 +217,12 @@ namespace MailboxLogParser
 
         private void dgMain_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var item = this.dgMain.SelectedItems[0] as DataRowView;
+            if (dgMain.SelectedItems.Count == 1)
+            {
+                var item = this.dgMain.SelectedItems[0] as DataRowView;
 
-            LoadReportRowData(item["Id"].ToString());
+                LoadReportRowData(item["Id"].ToString());
+            }
         }
 
         private void btnClear_Click(object sender, RoutedEventArgs e)

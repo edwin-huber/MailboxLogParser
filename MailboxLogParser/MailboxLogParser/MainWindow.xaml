@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MailboxLogParser"
         mc:Ignorable="d"
-        Title="MainWindow" Height="527.525" Width="939">
+        Title="ActiveSync Mailbox Log Parser" Height="527.525" Width="939">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="DataGridColumn"></ColumnDefinition>
@@ -48,11 +48,11 @@
                 <RowDefinition x:Name="SplitterRow2" Height="4"></RowDefinition>
                 <RowDefinition x:Name="ResponseRow"></RowDefinition>
             </Grid.RowDefinitions>
-            <TextBox x:Name="LogDetailHeaders" Grid.Row="0" Margin="2,2,2,4">Headers</TextBox>
+            <TextBox x:Name="LogDetailHeaders" Grid.Row="0" Margin="2,2,2,4" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">Headers</TextBox>
             <GridSplitter x:Name="splitHoriz1" Height="4" ResizeDirection="Rows" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  />
-            <TextBox x:Name="LogDetailRequest" Grid.Row="2" Margin="2,4,2,4">Request</TextBox>
+            <TextBox x:Name="LogDetailRequest" Grid.Row="2" Margin="2,4,2,4" ScrollViewer.VerticalScrollBarVisibility="Auto">Request</TextBox>
             <GridSplitter x:Name="splitHoriz2" Height="4" ResizeDirection="Rows" Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-            <TextBox x:Name="LogDetailResponse" Grid.Row="4" Margin="2,4,2,2">Response</TextBox>
+            <TextBox x:Name="LogDetailResponse" Grid.Row="4" Margin="2,4,2,2" ScrollViewer.VerticalScrollBarVisibility="Auto">Response</TextBox>
 
         </Grid>
         <StatusBar x:Name="StatusBar" Grid.Row="2" Grid.ColumnSpan="2" Margin="2,2,2,2">
