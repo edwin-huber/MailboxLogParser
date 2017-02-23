@@ -35,10 +35,12 @@
                     Click="btnImport_Click"></Button>
             <Button x:Name="btnClear" Content="Clear Grid" Width="90" Margin="2,2,2,2" HorizontalAlignment="Left"
                     Click="btnClear_Click"></Button>
-            <Button x:Name="btnExportMerged" Width="90" Margin="2,2,2,2" HorizontalAlignment="Left">
+            <Button x:Name="btnExportMerged" Width="90" Margin="2,2,2,2" HorizontalAlignment="Left" IsEnabled="False"
+                    Click="btnExportMerged_Click">
                 <TextBlock TextWrapping="Wrap">Export Merged Mailbox Logs...</TextBlock>
             </Button>
-            <Button x:Name="btnExportToCsv" Width="90" Margin="2,2,2,2" HorizontalAlignment="Left">
+            <Button x:Name="btnExportToCsv" Width="90" Margin="2,2,2,2" HorizontalAlignment="Left" IsEnabled="False"
+                    Click="btnExportToCsv_Click">
                 <TextBlock TextWrapping="Wrap">Export Grid to CSV...</TextBlock>
             </Button>
             
@@ -114,6 +116,20 @@
                     </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
             </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="ExceptionInfo" Width="Auto" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding Path=Columns[ExceptionInfo], Mode=OneWay}" IsReadOnly="True"></TextBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="RoundTripSeconds" Width="Auto" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding Path=Columns[RoundTripSeconds], Mode=OneWay}" IsReadOnly="True"></TextBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
         <GridSplitter Grid.Row="1" Width="2" Margin="2,2,2,2" ResizeDirection="Columns"></GridSplitter>

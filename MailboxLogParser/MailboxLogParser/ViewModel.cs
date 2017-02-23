@@ -16,9 +16,9 @@ namespace MailboxLogParser
     {
         public ReportBase Report = new BasicReport();
         private DataTable table;
-        // public DataView View;
         public CollectionView ListView;
         private IEnumerable<string> searchHitRows;
+
         /// <summary>
         /// Not thread safe, as we are updating the DataTable
         /// </summary>
@@ -153,10 +153,6 @@ namespace MailboxLogParser
 
         /// <summary>
         /// Returns true if the row is in the filter and should be shown
-        /// If we use the collection view filtering logic, but our collection
-        /// in the reportrows is a little messy for this purpose, currently 
-        /// using a string filter on the DefaultView on the table...
-        /// Needs perf testing if this is really an issue or not
         /// </summary>
         /// <param name="reportRow"></param>
         /// <returns></returns>

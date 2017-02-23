@@ -186,6 +186,11 @@ namespace MailboxLogParser
             finally
             {
                 // ToDo: Reset wait cursor?
+                if(dgMain.Items.Count > 0)
+                {
+                    btnExportToCsv.IsEnabled = true;
+                    btnExportMerged.IsEnabled = true;
+                }
             }
         }
 
@@ -202,6 +207,8 @@ namespace MailboxLogParser
         private void btnClear_Click(object sender, RoutedEventArgs e)
         {
             ClearLogs();
+            btnExportMerged.IsEnabled = false;
+            btnExportToCsv.IsEnabled = false;
         }
 
         private void btnSearch_Click(object sender, RoutedEventArgs e)
@@ -235,8 +242,84 @@ namespace MailboxLogParser
             viewModel.ExecuteSearch(txtSearch.Text);
         }
 
-        #endregion
+        private void btnExportMerged_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new SaveFileDialog();
+            dialog.DefaultExt = "txt";
+            dialog.AddExtension = true;
+            dialog.Filter = "Text File (*.txt) | *.txt";
+            dialog.CheckPathExists = true;
 
+            if (dialog.ShowDialog() != true)
+            {
+                return;
+            }
+
+            string outputFile = dialog.FileName;
+
+            try
+            {
+                UpdateStatus("Saving file...");
+                viewModel.Report.ExportRawLogEntries(outputFile);
+            }
+            catch (Exception saveException)
+            {
+                MessageBox.Show(saveException.ToString());
+            }
+            finally
+            {
+                UpdateStatus("Grid data saved to file...");
+            }
+
+            try
+            {
+                Process.Start(outputFile);
+            }
+            catch (Exception processStartEx)
+            {
+                MessageBox.Show(processStartEx.ToString());
+            }
+        }
+
+        private void btnExportToCsv_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new SaveFileDialog();
+            dialog.DefaultExt = "csv";
+            dialog.AddExtension = true;
+            dialog.Filter = "Comma Separated Values File (*.csv) | *.csv";
+            dialog.CheckPathExists = true;
+
+            if (dialog.ShowDialog() != true)
+            {
+                return;
+            }
+
+            string outputFile = dialog.FileName;
+
+            try
+            {
+                UpdateStatus("Saving file...");
+                viewModel.Report.ExportReportToCSV(outputFile);
+            }
+            catch (Exception saveException)
+            {
+                MessageBox.Show(saveException.ToString());
+            }
+            finally
+            {
+                UpdateStatus("Grid data saved to CSV file...");
+            }
+
+            try
+            {
+                Process.Start(outputFile);
+            }
+            catch (Exception processStartEx)
+            {
+                MessageBox.Show(processStartEx.ToString());
+            }
+        }
+        #endregion
 
     }
 }
