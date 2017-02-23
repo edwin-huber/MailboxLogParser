@@ -15,7 +15,7 @@ namespace MailboxLogParser
     class ViewModel
     {
         public ReportBase Report = new BasicReport();
-        private DataTable table;
+
         public CollectionView ListView;
         private IEnumerable<string> searchHitRows;
 
@@ -26,50 +26,14 @@ namespace MailboxLogParser
         public void LoadMailboxLogs(string[] mailboxLogFiles)
         {
             this.Report.LoadMailboxLogs(mailboxLogFiles);
-            int index = 0;
-            table = new DataTable();
-            setColumns(Report.ReportColumns);
-            
-            foreach (ReportRowBase reportRow in this.Report.ReportRows)
-            {
-                DataRow dr = table.NewRow();
-                dr["Id"] = index;
-                index++;
-
-                setRow(dr, reportRow);
-
-                table.Rows.Add(dr);
-            }
 
             ListView = (CollectionView) CollectionViewSource.GetDefaultView(Report.ReportRows);
-        }
-
-        private void setRow(DataRow dr, ReportRowBase reportRow)
-        {
-            foreach (string columnName in reportRow.Columns.Keys)
-            {
-                dr[columnName] = (reportRow[columnName] == null) ? DBNull.Value : reportRow[columnName] ;
-            }
-        }
-
-        private void setColumns(List<ReportColumnBase> cols)
-        {
-            DataColumn dc;
-            dc = new DataColumn("Id", Type.GetType("System.Int32")); // Col 0
-            table.Columns.Add(dc);
-            foreach (ReportColumnBase col in cols)
-            {
-                dc = new DataColumn(col.ColumnName, col.ColumnValueType);
-                table.Columns.Add(dc);
-            }
         }
 
         internal void Clear()
         {
             this.Report = new BasicReport();
             ListView = null;
-            table = null;
-            
         }
 
         private static string ConvertToBase16(string base64)
@@ -90,7 +54,6 @@ namespace MailboxLogParser
 
             return ret.ToString();
         }
-
 
         public void ExecuteSearch(string searchString)
         {
@@ -148,8 +111,6 @@ namespace MailboxLogParser
 
             return rep.RawData;
         }
-
-
 
         /// <summary>
         /// Returns true if the row is in the filter and should be shown
