@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Diagnostics;
 using System.Data;
 using Microsoft.Win32;
+using MailboxLogParser.Common.Reporting.BasicReport;
 
 namespace MailboxLogParser
 {
@@ -26,44 +27,20 @@ namespace MailboxLogParser
         {
             InitializeComponent();
             viewModel = new ViewModel();
-            dgMain.ItemsSource = viewModel.View;
+            dgMain.ItemsSource = viewModel.ListView;
         }
         #endregion
 
         #region Private Methods
 
-        public static string ConvertToBase16(string base64)
-        {
-            string base16 = string.Empty;
-
-            byte[] bytes = Convert.FromBase64String(base64);
-            return GetStringFromBytes(bytes);
-        }
-
-        public static string GetStringFromBytes(byte[] bytes)
-        {
-            StringBuilder ret = new StringBuilder();
-            foreach (byte b in bytes)
-            {
-                ret.Append(Convert.ToString(b, 16).PadLeft(2, '0'));
-            }
-
-            return ret.ToString();
-        }
-
-        
-
         private void UpdateStatus(string statusMessage)
         {
             Debug.WriteLine("UpdateStatus called.");
             this.StatusLabel.Content = statusMessage;
-
             int visibleRows = this.dgMain.Items.Count;
-            // ToDo:
-            // int hiddenRows = this.LogReportGrid.Rows.Count - visibleRows;
-
+            int hiddenRows = this.viewModel.Report.ReportRows.Count - visibleRows;
             this.VisibleRowsLabel.Content = "Visible Rows: " + visibleRows;
-            // this.HiddenRowsLabel.Content = "Hidden Rows: " + hiddenRows;
+            this.HiddenRowsLabel.Content = "Hidden Rows: " + hiddenRows;
             this.UpdateLayout();
         }
 
@@ -71,7 +48,7 @@ namespace MailboxLogParser
         {
             viewModel.Clear();
 
-            this.dgMain.ItemsSource = null; //  LogReportGrid.Rows.Clear();
+            this.dgMain.ItemsSource = null;
 
             this.LogDetailHeaders.Text = string.Empty;
             this.LogDetailRequest.Text = string.Empty;
@@ -113,33 +90,28 @@ namespace MailboxLogParser
         /// view windows
         /// </summary>
         /// <param name="rowId"></param>
-        private void LoadReportRowData(string rowId)
+        private void LoadReportRowData(object report)
         {
             Stopwatch total = new Stopwatch();
             total.Start();
 
             try
             {
-                var data = from r in viewModel.Report.ReportRows
-                           where (string)r.Columns["Name"] == rowId
-                           select r.RawData as string;
+                this.LogDetailHeaders.Text = null;
+                this.LogDetailResponse.Text = null;
+                this.LogDetailRequest.Text = null;
 
-                if (data.Count() > 1)
+                string data = viewModel.RetrieveData(report);
+                
+                if (data.Length == 0)
                 {
-                    throw new ApplicationException("More than one match in ReportRows for RowId, '" + rowId + "'");
-                }
-
-                if (data.Count() == 0)
-                {
-                    this.LogDetailHeaders.Text = null;
-                    this.LogDetailResponse.Text = null;
-                    this.LogDetailRequest.Text = null;
                     return;
                 }
 
 
                 ResponseDataBuilder.Clear();
-                ResponseDataBuilder.Append(data.First());
+
+                ResponseDataBuilder.Append(data);
 
                 if (ResponseDataBuilder.ToString().IndexOf("RequestBody") > 0)
                 {
@@ -161,7 +133,7 @@ namespace MailboxLogParser
                 }
                 else
                 {
-                    this.LogDetailRequest.Text = data.First();
+                    this.LogDetailRequest.Text = data;
                 }
 
 
@@ -176,6 +148,8 @@ namespace MailboxLogParser
                 Debug.WriteLine("LoadReportRowData: Overall took " + total.ElapsedMilliseconds + " milliseconds.");
             }
         }
+
+        
 
         #endregion
 
@@ -199,7 +173,7 @@ namespace MailboxLogParser
                         // ToDo: Set wait cursor?
                         UpdateStatus("Loading...");
                         LoadLogsToGrid(dialog.FileNames);
-                        dgMain.ItemsSource = viewModel.View;
+                        dgMain.ItemsSource = viewModel.ListView;
                     }
                     finally
                     {
@@ -219,9 +193,9 @@ namespace MailboxLogParser
         {
             if (dgMain.SelectedItems.Count == 1)
             {
-                var item = this.dgMain.SelectedItems[0] as DataRowView;
+                var item = this.dgMain.SelectedItems[0];
 
-                LoadReportRowData(item["Id"].ToString());
+                LoadReportRowData(item);
             }
         }
 
@@ -230,6 +204,39 @@ namespace MailboxLogParser
             ClearLogs();
         }
 
+        private void btnSearch_Click(object sender, RoutedEventArgs e)
+        {
+            viewModel.ExecuteSearch(txtSearch.Text);
+            UpdateStatus("Filtered...");
+        }
+
+        private void btnClearSearch_Click(object sender, RoutedEventArgs e)
+        {
+            txtSearch.Text = "";
+            viewModel.ExecuteSearch("");
+            UpdateStatus("Filter cleared...");
+        }
+
+        private void ctxRequestTextBoxSearch_Click(object sender, RoutedEventArgs e)
+        {
+            txtSearch.Text = LogDetailRequest.SelectedText;
+            viewModel.ExecuteSearch(txtSearch.Text);
+        }
+
+        private void ctxHeaderTextBoxSearch_Click(object sender, RoutedEventArgs e)
+        {
+            txtSearch.Text = LogDetailHeaders.SelectedText;
+            viewModel.ExecuteSearch(txtSearch.Text);
+        }
+
+        private void ctxResponseTextBoxSearch_Click(object sender, RoutedEventArgs e)
+        {
+            txtSearch.Text = LogDetailResponse.SelectedText;
+            viewModel.ExecuteSearch(txtSearch.Text);
+        }
+
         #endregion
+
+
     }
 }

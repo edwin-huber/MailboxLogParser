@@ -5,7 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MailboxLogParser"
         mc:Ignorable="d"
-        Title="ActiveSync Mailbox Log Parser" Height="527.525" Width="939">
+        Title="ActiveSync Mailbox Log Parser" Height="527.525" Width="939"  WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <ContextMenu x:Key="HeaderDetailsTextBoxContextMenu">
+            <MenuItem Command="ApplicationCommands.Copy" />
+            <MenuItem Header="Search" x:Name="ctxHeaderTextBoxSearch" Click="ctxHeaderTextBoxSearch_Click" />
+        </ContextMenu>
+        <ContextMenu x:Key="RequestDetailsTextBoxContextMenu">
+            <MenuItem Command="ApplicationCommands.Copy" />
+            <MenuItem Header="Search" x:Name="ctxRequestTextBoxSearch" Click="ctxRequestTextBoxSearch_Click" />
+        </ContextMenu>
+        <ContextMenu x:Key="ResultDetailsTextBoxContextMenu">
+            <MenuItem Command="ApplicationCommands.Copy" />
+            <MenuItem Header="Search" x:Name="ctxResponseTextBoxSearch" Click="ctxResponseTextBoxSearch_Click" />
+        </ContextMenu>
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="DataGridColumn"></ColumnDefinition>
@@ -33,12 +47,75 @@
                 <TextBox x:Name="txtSearch" Width="150"></TextBox>
             </StackPanel>
             <StackPanel Margin="2,2,2,2">
-                <Button x:Name="btnSearch" Width="70" Margin="2,2,2,2">Search</Button>
-                <Button x:Name="btnClearSearch" Margin="2,2,2,2">Clear</Button>
+                <Button x:Name="btnSearch" Width="70" Margin="2,2,2,2"
+                        Click="btnSearch_Click">Search</Button>
+                <Button x:Name="btnClearSearch" Margin="2,2,2,2"
+                        Click="btnClearSearch_Click">Clear</Button>
             </StackPanel>
         </StackPanel>
         <DataGrid x:Name="dgMain" Grid.Column="0" Grid.Row="1" Margin="2,2,6,2"
-                  SelectionChanged="dgMain_SelectionChanged"></DataGrid>
+                  AutoGenerateColumns="False"
+                  SelectionChanged="dgMain_SelectionChanged">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Id" Width="Auto" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding RowId, Mode=OneWay}" IsReadOnly="True"></TextBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="ServerName" Width="Auto" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding Path=Columns[ServerName], Mode=OneWay}" IsReadOnly="True"></TextBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Command" Width="Auto" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding Path=Columns[Command], Mode=OneWay}" IsReadOnly="True"></TextBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="RequestTime" Width="Auto" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding Path=Columns[RequestTime], Mode=OneWay}" IsReadOnly="True"></TextBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            
+            <DataGridTemplateColumn Header="ResponseTime" Width="Auto" IsReadOnly="True">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBox Text="{Binding Path=Columns[ResponseTime], Mode=OneWay}" IsReadOnly="True"></TextBox>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <DataGridTemplateColumn Header="HttpStatus" Width="Auto" IsReadOnly="True">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBox Text="{Binding Path=Columns[HttpStatus], Mode=OneWay}" IsReadOnly="True"></TextBox>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <DataGridTemplateColumn Header="EASStatus" Width="Auto" IsReadOnly="True">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBox Text="{Binding Path=Columns[Status], Mode=OneWay}" IsReadOnly="True"></TextBox>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <DataGridTemplateColumn Header="StatusDefinition" Width="Auto" IsReadOnly="True">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBox Text="{Binding Path=Columns[StatusDefinition], Mode=OneWay}" IsReadOnly="True"></TextBox>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
         <GridSplitter Grid.Row="1" Width="2" Margin="2,2,2,2" ResizeDirection="Columns"></GridSplitter>
         <Grid Grid.Column="1" Grid.Row="1">
             <Grid.RowDefinitions>
@@ -48,11 +125,14 @@
                 <RowDefinition x:Name="SplitterRow2" Height="4"></RowDefinition>
                 <RowDefinition x:Name="ResponseRow"></RowDefinition>
             </Grid.RowDefinitions>
-            <TextBox x:Name="LogDetailHeaders" Grid.Row="0" Margin="2,2,2,4" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">Headers</TextBox>
+            <TextBox x:Name="LogDetailHeaders" Grid.Row="0" Margin="2,2,2,4" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     ContextMenu="{StaticResource HeaderDetailsTextBoxContextMenu}">Headers</TextBox>
             <GridSplitter x:Name="splitHoriz1" Height="4" ResizeDirection="Rows" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  />
-            <TextBox x:Name="LogDetailRequest" Grid.Row="2" Margin="2,4,2,4" ScrollViewer.VerticalScrollBarVisibility="Auto">Request</TextBox>
+            <TextBox x:Name="LogDetailRequest" Grid.Row="2" Margin="2,4,2,4" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     ContextMenu="{StaticResource RequestDetailsTextBoxContextMenu}">Request</TextBox>
             <GridSplitter x:Name="splitHoriz2" Height="4" ResizeDirection="Rows" Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-            <TextBox x:Name="LogDetailResponse" Grid.Row="4" Margin="2,4,2,2" ScrollViewer.VerticalScrollBarVisibility="Auto">Response</TextBox>
+            <TextBox x:Name="LogDetailResponse" Grid.Row="4" Margin="2,4,2,2" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     ContextMenu="{StaticResource ResultDetailsTextBoxContextMenu}">Response</TextBox>
 
         </Grid>
         <StatusBar x:Name="StatusBar" Grid.Row="2" Grid.ColumnSpan="2" Margin="2,2,2,2">
@@ -64,4 +144,5 @@
         </StatusBar>
 
     </Grid>
+    
 </Window>
