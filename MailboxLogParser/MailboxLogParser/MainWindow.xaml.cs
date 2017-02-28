@@ -213,33 +213,34 @@ namespace MailboxLogParser
 
         private void btnSearch_Click(object sender, RoutedEventArgs e)
         {
-            viewModel.ExecuteSearch(txtSearch.Text);
-            UpdateStatus("Filtered...");
+            doSearch(txtSearch.Text, "Filtered...");
         }
 
         private void btnClearSearch_Click(object sender, RoutedEventArgs e)
         {
-            txtSearch.Text = "";
-            viewModel.ExecuteSearch("");
-            UpdateStatus("Filter cleared...");
+            doSearch("","Filter cleared...");
         }
 
         private void ctxRequestTextBoxSearch_Click(object sender, RoutedEventArgs e)
         {
-            txtSearch.Text = LogDetailRequest.SelectedText;
-            viewModel.ExecuteSearch(txtSearch.Text);
+            doSearch(LogDetailRequest.SelectedText,"Filtered...");
         }
 
         private void ctxHeaderTextBoxSearch_Click(object sender, RoutedEventArgs e)
         {
-            txtSearch.Text = LogDetailHeaders.SelectedText;
-            viewModel.ExecuteSearch(txtSearch.Text);
+            doSearch(LogDetailHeaders.SelectedText, "Filtered...");
         }
 
         private void ctxResponseTextBoxSearch_Click(object sender, RoutedEventArgs e)
         {
-            txtSearch.Text = LogDetailResponse.SelectedText;
+            doSearch(LogDetailResponse.SelectedText, "Filtered...");
+        }
+
+        private void doSearch(string searchstring, string statusUpdate)
+        {
+            txtSearch.Text = searchstring;
             viewModel.ExecuteSearch(txtSearch.Text);
+            UpdateStatus(statusUpdate);
         }
 
         private void btnExportMerged_Click(object sender, RoutedEventArgs e)
