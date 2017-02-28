@@ -154,9 +154,11 @@
         <StatusBar x:Name="StatusBar" Grid.Row="2" Grid.ColumnSpan="2" Margin="2,2,2,2">
             <StatusBarItem x:Name="StatusLabel" Margin="2,2,2,2" Width="160" >Import a mailbox log...</StatusBarItem>
             <Separator></Separator>
-            <StatusBarItem x:Name="VisibleRowsLabel" Margin="2,2,2,2" Width="120" HorizontalAlignment="Center">Visible Rows:</StatusBarItem>
+            <StatusBarItem x:Name="VisibleRowsLabel" Margin="2,2,2,2" Width="120" HorizontalAlignment="Right">Visible Rows:</StatusBarItem>
+            <StatusBarItem x:Name="VisibleRowsVal" Margin="2,2,2,2" Width="120" HorizontalAlignment="Left" Content="{Binding ElementName=dgMain, Path=Items.Count}"></StatusBarItem>
             <Separator></Separator>
-            <StatusBarItem x:Name="HiddenRowsLabel" Margin="2,2,2,2" Width="120" HorizontalAlignment="Center">Hidden Rows:</StatusBarItem>
+            <StatusBarItem x:Name="HiddenRowsLabel" Margin="2,2,2,2" Width="120" HorizontalAlignment="Right">Hidden Rows:</StatusBarItem>
+            <StatusBarItem x:Name="HiddenRowsVal" Margin="2,2,2,2" Width="120" HorizontalAlignment="Left"></StatusBarItem>
         </StatusBar>
 
     </Grid>

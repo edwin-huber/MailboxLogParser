@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 using System.Data;
 using System.Diagnostics;
 using System.Windows.Data;
+using System.Threading;
+using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace MailboxLogParser
 {
@@ -16,8 +19,16 @@ namespace MailboxLogParser
     {
         public ReportBase Report = new BasicReport();
 
-        public CollectionView ListView;
+        public ObservableCollection<ReportRowBase> ListView;
+        private CollectionView view;
         private IEnumerable<string> searchHitRows;
+
+        public event EventHandler FilterComplete;
+
+        protected virtual void OnFilterComplete(EventArgs e)
+        {
+            FilterComplete?.Invoke(this, e);
+        }
 
         /// <summary>
         /// Not thread safe, as we are updating the DataTable
@@ -27,7 +38,21 @@ namespace MailboxLogParser
         {
             this.Report.LoadMailboxLogs(mailboxLogFiles);
 
-            ListView = (CollectionView) CollectionViewSource.GetDefaultView(Report.ReportRows);
+            view = (CollectionView) CollectionViewSource.GetDefaultView(Report.ReportRows);
+            ListView = new ObservableCollection<ReportRowBase>();
+            updateListView();
+        }
+
+        private void updateListView()
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+           {
+               ListView.Clear();
+               foreach (var row in view)
+               {
+                   ListView.Add((ReportRowBase)row);
+               }
+           });
         }
 
         internal void Clear()
@@ -57,9 +82,6 @@ namespace MailboxLogParser
 
         public void ExecuteSearch(string searchString)
         {
-            Stopwatch total = new Stopwatch();
-            total.Start();
-
             try
             {
                 Stopwatch linq = new Stopwatch();
@@ -91,18 +113,39 @@ namespace MailboxLogParser
                 Stopwatch loop = new Stopwatch();
                 loop.Start();
 
-                // view should only contain rows which match the search of the report
 
-                ListView.Filter = new Predicate<object>(RowInFilter);
-                                
-                loop.Stop();
-                Debug.WriteLine("ExecuteSearch: DataGrid predicate filter on ListView took " + loop.ElapsedMilliseconds + " milliseconds.");
+                // view should only contain rows which match the search of the report
+                Task<CollectionView> t1 = Task.Factory.StartNew((arg) =>
+                {
+                    ReportBase report = (ReportBase)arg;
+                    CollectionView internalview = (CollectionView)CollectionViewSource.GetDefaultView(report.ReportRows);
+                    internalview.Filter = new Predicate<object>(RowInFilter);
+                    return internalview;
+                }, Report, new CancellationToken(), TaskCreationOptions.None, TaskScheduler.Default);
+
+                Task t2 = t1.ContinueWith((antecedent) =>
+                {
+                    view = antecedent.Result;
+                }, new CancellationToken(), TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
+
+                Task t3 = t2.ContinueWith((antecedent) =>
+                {
+                    updateListView();
+                    OnFilterComplete(EventArgs.Empty);
+                    loop.Stop();
+                    Debug.WriteLine("ExecuteSearch: DataGrid predicate filter on ListView took " + loop.ElapsedMilliseconds + " milliseconds.");
+
+                });
             }
-            finally
+            catch (AggregateException ae)
             {
-                total.Stop();
-                Debug.WriteLine("ExecuteSearch: Overall took " + total.ElapsedMilliseconds + " milliseconds.");
+                 Debug.WriteLine(ae.ToString());
             }
+        }
+
+        private async void awaitTask(Task t)
+        {
+            await t.ContinueWith((antecedent) => {/* Nothing */ }).ConfigureAwait(true);
         }
 
         internal string RetrieveData(object report)

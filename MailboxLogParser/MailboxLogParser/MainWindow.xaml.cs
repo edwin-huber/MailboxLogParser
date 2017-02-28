@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Data;
 using Microsoft.Win32;
 using MailboxLogParser.Common.Reporting.BasicReport;
+using System.Threading.Tasks;
 
 namespace MailboxLogParser
 {
@@ -20,6 +21,11 @@ namespace MailboxLogParser
         private List<int> HiddenGridRowIndexes = new List<int>();
         private static StringBuilder ResponseDataBuilder = new StringBuilder();
         private ViewModel viewModel;
+        private bool canSearch = true;
+
+        // Allows hidden row counts to be updated effectively
+        public delegate void DataGridUpdated();
+
         #endregion
 
         #region Constructor
@@ -28,6 +34,12 @@ namespace MailboxLogParser
             InitializeComponent();
             viewModel = new ViewModel();
             dgMain.ItemsSource = viewModel.ListView;
+            viewModel.FilterComplete += ViewModel_FilterComplete;
+        }
+
+        private void ViewModel_FilterComplete(object sender, EventArgs e)
+        {
+            enableControls();
         }
         #endregion
 
@@ -37,11 +49,34 @@ namespace MailboxLogParser
         {
             Debug.WriteLine("UpdateStatus called.");
             this.StatusLabel.Content = statusMessage;
+            
+            this.UpdateLayout();
+        }
+
+        private void enableControls()
+        {
+            canSearch = true;
+            btnClear.IsEnabled = true;
+            btnClearSearch.IsEnabled = true;
+            btnExportMerged.IsEnabled = true;
+            btnExportToCsv.IsEnabled = true;
+            btnImport.IsEnabled = true;
+            btnSearch.IsEnabled = true;
+
             int visibleRows = this.dgMain.Items.Count;
             int hiddenRows = this.viewModel.Report.ReportRows.Count - visibleRows;
-            this.VisibleRowsLabel.Content = "Visible Rows: " + visibleRows;
             this.HiddenRowsLabel.Content = "Hidden Rows: " + hiddenRows;
-            this.UpdateLayout();
+        }
+
+        private void disableControls()
+        {
+            canSearch = false;
+            btnClear.IsEnabled = false;
+            btnClearSearch.IsEnabled = false;
+            btnExportMerged.IsEnabled = false;
+            btnExportToCsv.IsEnabled = false;
+            btnImport.IsEnabled = false;
+            btnSearch.IsEnabled = false;
         }
 
         private void ClearLogs()
@@ -238,9 +273,17 @@ namespace MailboxLogParser
 
         private void doSearch(string searchstring, string statusUpdate)
         {
-            txtSearch.Text = searchstring;
-            viewModel.ExecuteSearch(txtSearch.Text);
-            UpdateStatus(statusUpdate);
+            if (canSearch)
+            {
+                disableControls();
+                txtSearch.Text = searchstring;
+                Task t = Task.Factory.StartNew(() => viewModel.ExecuteSearch(txtSearch.Text), new System.Threading.CancellationToken(), TaskCreationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
+
+                Task t2 = t.ContinueWith((antecedent) =>
+                {
+                    UpdateStatus(statusUpdate);
+                }, TaskScheduler.FromCurrentSynchronizationContext());
+            }
         }
 
         private void btnExportMerged_Click(object sender, RoutedEventArgs e)
