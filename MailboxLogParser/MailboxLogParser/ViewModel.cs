@@ -21,7 +21,7 @@ namespace MailboxLogParser
 
         public ObservableCollection<ReportRowBase> ListView;
         private CollectionView view;
-        private IEnumerable<string> searchHitRows;
+        private IEnumerable<ReportRowBase> searchHitRows;
 
         public event EventHandler FilterComplete;
 
@@ -94,11 +94,13 @@ namespace MailboxLogParser
                     searchString = searchString.Replace("[GOID]", "");
                     altText = ConvertToBase16(searchString).Substring(40);
                 }
+
                 // Query the raw data for each row in the report to see if
                 // they contain the search text
                 searchHitRows = from r in Report.ReportRows
                                     where r.RawData.ToUpper().Contains(searchString.ToUpper()) || r.RawData.ToUpper().Contains(altText.ToUpper())
-                                    select r.RowId as string;
+                                select r
+                                    ;
 
                 // no results bail
                 if (searchHitRows.Count() == 0)
@@ -118,8 +120,10 @@ namespace MailboxLogParser
                 Task<CollectionView> t1 = Task.Factory.StartNew((arg) =>
                 {
                     ReportBase report = (ReportBase)arg;
-                    CollectionView internalview = (CollectionView)CollectionViewSource.GetDefaultView(report.ReportRows);
-                    internalview.Filter = new Predicate<object>(RowInFilter);
+                    CollectionView internalview = (CollectionView)CollectionViewSource.GetDefaultView(searchHitRows);
+
+
+                    // internalview.Filter = new Predicate<object>(RowInFilter);
                     return internalview;
                 }, Report, new CancellationToken(), TaskCreationOptions.None, TaskScheduler.Default);
 
@@ -153,23 +157,6 @@ namespace MailboxLogParser
             ReportRowBase rep = report as ReportRowBase;
 
             return rep.RawData;
-        }
-
-        /// <summary>
-        /// Returns true if the row is in the filter and should be shown
-        /// </summary>
-        /// <param name="reportRow"></param>
-        /// <returns></returns>
-        public bool RowInFilter(object reportRow)
-        {
-            ReportRowBase r = reportRow as ReportRowBase;
-
-            if(searchHitRows.Contains(r.RowId as string))
-            {
-                return true;
-            }
-
-            return false;
         }
 
     }

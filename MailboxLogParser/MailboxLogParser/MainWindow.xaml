@@ -62,6 +62,13 @@
                 <DataGridTemplateColumn Header="Id" Width="Auto" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
+                            <TextBox Text="{Binding Id, Mode=OneWay}" IsReadOnly="True"></TextBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Identifier" Width="Auto" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
                             <TextBox Text="{Binding RowId, Mode=OneWay}" IsReadOnly="True"></TextBox>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
