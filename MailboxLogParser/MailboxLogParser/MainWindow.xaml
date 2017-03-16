@@ -62,7 +62,7 @@
                 <DataGridTemplateColumn Header="Id" Width="Auto" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBox Text="{Binding Id, Mode=OneWay}" IsReadOnly="True"></TextBox>
+                            <TextBox Text="{Binding Path=Columns[Name], Mode=OneWay}" IsReadOnly="True"></TextBox>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
