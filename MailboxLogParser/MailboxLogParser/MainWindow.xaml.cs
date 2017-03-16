@@ -62,6 +62,8 @@ namespace MailboxLogParser
             btnExportToCsv.IsEnabled = true;
             btnImport.IsEnabled = true;
             btnSearch.IsEnabled = true;
+            btnExportMerged.IsEnabled = true;
+            btnExportToCsv.IsEnabled = true;
 
             int visibleRows = this.dgMain.Items.Count;
             int hiddenRows = this.viewModel.Report.ReportRows.Count - visibleRows;
@@ -77,6 +79,8 @@ namespace MailboxLogParser
             btnExportToCsv.IsEnabled = false;
             btnImport.IsEnabled = false;
             btnSearch.IsEnabled = false;
+            btnExportMerged.IsEnabled = false;
+            btnExportToCsv.IsEnabled = false;
         }
 
         private void ClearLogs()
