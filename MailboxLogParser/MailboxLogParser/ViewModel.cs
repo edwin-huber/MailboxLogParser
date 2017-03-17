@@ -147,11 +147,6 @@ namespace MailboxLogParser
             }
         }
 
-        private async void awaitTask(Task t)
-        {
-            await t.ContinueWith((antecedent) => {/* Nothing */ }).ConfigureAwait(true);
-        }
-
         internal string RetrieveData(object report)
         {
             ReportRowBase rep = report as ReportRowBase;
